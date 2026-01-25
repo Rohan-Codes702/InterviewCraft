@@ -12,8 +12,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@clerk/express": "^1.7.4",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "inngest": "^3.40.1",
     "mongoose": "^9.1.5",
     "nodemon": "^3.1.11"
   }
