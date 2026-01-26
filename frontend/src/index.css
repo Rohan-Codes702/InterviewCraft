@@ -1,0 +1,37 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  height: auto;
+}
+
+/* Clerk UserButton Global Styles */
+.cl-userButton,
+.cl-userButton-root,
+.cl-userButton-box,
+.cl-userButton-trigger,
+.cl-avatar {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.cl-userButton-triggerBackdrop {
+  display: none !important;
+}
+
+.cl-dropdown-trigger {
+  position: relative !important;
+  z-index: 1001 !important;
+}

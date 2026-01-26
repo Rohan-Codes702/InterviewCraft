@@ -1,0 +1,8 @@
+- [ ] Fix syntax errors in server.js (imports and function definition)
+- [ ] Add missing imports and fix typo in inngest.js
+- [ ] Correct import and improve error handling in stream.js
+- [ ] Add missing import in chat.controller.js
+- [ ] Run the backend using npm run dev
+- [ ] Add Clerk SignIn component to AuthPage.jsx
+- [ ] Add basic styling to HomePage.jsx for the UserButton
+- [ ] Run the frontend to verify the UserButton visibility
