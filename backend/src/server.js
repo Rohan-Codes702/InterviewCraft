@@ -7,11 +7,15 @@ import { functions, inngest } from './config/inngest.js';
 import {serve}from"inngest/express";
 import chatRoutes from './routes/chat.route.js';
 import * as Sentry from "@sentry/node";
+import cors from 'cors';
 
 const app=express();
 app.use(express.json());
 app.use(clerkMiddleware())
-
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.get("/debug-sentry",function mainHandler(req,res){
     throw new Error("My first Sentry error!");
 });
@@ -20,10 +24,6 @@ app.use("/api/chat", chatRoutes);
 
 Sentry.setupExpressErrorHandler(app);
 
-
-app.get('/',(req,res)=>{
-    res.send("Hello Rohan!");
-});
 console.log("Mongo URI:", ENV.MONGO_URI);
 
 const startServer=async()=>{

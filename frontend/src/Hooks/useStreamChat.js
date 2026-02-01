@@ -11,7 +11,7 @@ export const useStreamChat = () => {
     const [chatClient, setChatClient] = useState(null);
 
 
-    const { data: tokenData, isLoading: tokenLoading, error: tokenError } = useQuery({
+    const { data: tokenData, isLoading: isLoading, error: error } = useQuery({
         queryKey: ["streamToken"],
         queryFn: getStreamToken,
         enabled: !!user?.id,
@@ -34,5 +34,5 @@ export const useStreamChat = () => {
         initChat();
     }, [user, tokenData]);
 
-    return { chatClient, tokenLoading, tokenError };
+    return { chatClient, isLoading, error };
 };
