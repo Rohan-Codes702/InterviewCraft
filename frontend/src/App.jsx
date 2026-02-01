@@ -1,27 +1,39 @@
 import React from "react";
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 import { Routes, Route, Navigate } from "react-router";
 import HomePage from "./pages/HomePage.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
-import toast from "react-hot-toast";
+import CallPage from "./pages/CallPage.jsx";
 
 function App() {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded) return <div>Loading...</div>;
+
   return (
     <>
-    <button onClick={()=>toast.error("congrats 🎉")}></button>
-      <SignedIn>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/auth" element={<Navigate to="/" replace />} />
-        </Routes>
-      </SignedIn>
 
-      <SignedOut>
-        <Routes>
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="*" element={<Navigate to="/auth" replace />} />
-        </Routes>
-      </SignedOut>
+      <Routes>
+        <Route
+          path="/"
+          element={isSignedIn ? <HomePage /> : <Navigate to="/auth" replace />}
+        />
+
+        <Route
+          path="/auth"
+          element={!isSignedIn ? <AuthPage /> : <Navigate to="/" replace />}
+        />
+
+         <Route
+          path="/call/:id"
+          element={!isSignedIn ? <CallPage /> : <Navigate to="/auth" replace />}
+        />
+
+        <Route
+          path="*"
+          element={<Navigate to={isSignedIn ? "/" : "/auth"} replace />}
+        />
+      </Routes>
     </>
   );
 }
