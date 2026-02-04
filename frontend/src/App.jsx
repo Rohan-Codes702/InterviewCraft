@@ -26,7 +26,7 @@ function App() {
 
          <Route
           path="/call/:id"
-          element={!isSignedIn ? <CallPage /> : <Navigate to="/auth" replace />}
+          element={isSignedIn ? <CallPage /> : <Navigate to="/auth" replace />}
         />
 
         <Route

@@ -1,35 +1,35 @@
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
- const AuthContext = createContext({});
+const AuthContext = createContext({});
 
 export default function AuthProvider({ children }) {
   const { getToken } = useAuth();
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    if (!getToken) return;
+    // setup axios interceptor
 
     const interceptor = axiosInstance.interceptors.request.use(
       async (config) => {
         try {
-          const token = await getToken();
+          const token = await getToken({ skipCache: true });
           if (token) {
+            console.log("AuthProvider: Token fetched successfully. Start:", token.substring(0, 15) + "...");
             config.headers = config.headers || {};
-            config.headers.Authorization = `Bearer ${token}`;
+            config.headers['Authorization'] = `Bearer ${token}`;
+          } else {
+            console.warn("AuthProvider: [AUTH ERROR] getToken() returned NULL. Is the user logged in?");
           }
-          return config;
         } catch (error) {
-          if (
-            error.message?.includes("auth") ||
-            error.message?.includes("token")
-          ) {
+          if (error.message?.includes("auth") || error.message?.includes("token")) {
             toast.error("Authentication issue. Please refresh the page.");
           }
           console.log("Error getting token:", error);
-          return config;
         }
+        return config;
       },
       (error) => {
         console.error("Axios request error:", error);
@@ -37,14 +37,13 @@ export default function AuthProvider({ children }) {
       }
     );
 
-    return () => {
-      axiosInstance.interceptors.request.eject(interceptor);
-    };
+    setIsReady(true);
+
+    // cleanup function to remove the interceptor, this is important to avoid memory leaks
+    return () => axiosInstance.interceptors.request.eject(interceptor);
   }, [getToken]);
 
-  return (
-    <AuthContext.Provider value={{}}>
-      {children}
-    </AuthContext.Provider>
-  );
+  if (!isReady) return null;
+
+  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
 }
