@@ -1,54 +1,95 @@
 import { useState, useEffect } from "react";
-import { useUser, useAuth } from "@clerk/clerk-react";
 import { StreamChat } from "stream-chat";
+import { useUser } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
-import { getStreamToken } from "../lib/api.js";
+import { getStreamToken } from "../lib/api";
+import * as Sentry from "@sentry/react";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
+// this hook is used to connect the current user to the Stream Chat API
+// so that users can see each other's messages, send messages to each other, get realtime updates, etc.
+// it also handles  the disconnection when the user leaves the page
+
 export const useStreamChat = () => {
-    const { user } = useUser();
-    const [chatClient, setChatClient] = useState(null);
+  const { user } = useUser();
+  const [chatClient, setChatClient] = useState(null);
 
+  // fetch stream token using react-query
+  const {
+    data: tokenData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["streamToken"],
+    queryFn: getStreamToken,
+    enabled: !!user?.id, // this will take the object and convert it to a boolean
+  });
 
-    const { getToken } = useAuth();
+  // Debug logging
+  useEffect(() => {
+    console.log("[useStreamChat] tokenData:", tokenData);
+    console.log("[useStreamChat] user?.id:", user?.id);
+    console.log("[useStreamChat] isLoading:", isLoading);
+    console.log("[useStreamChat] error:", error);
+  }, [tokenData, user?.id, isLoading, error]);
 
-    const { data: tokenData, isLoading: isLoading, error: error } = useQuery({
-        queryKey: ["streamToken"],
-        queryFn: async () => {
-            // retrieve a Clerk token for authenticating to our backend
-            const clerkToken = await getToken();
-            // call backend endpoint and return only the stream token string
-            const resp = await getStreamToken(clerkToken);
-            return resp;
-        },
-        enabled: !!user?.id && !!getToken,
-    });
+  // init stream chat client
+  // init stream chat client
+  useEffect(() => {
+    if (!tokenData?.token || !user?.id || !STREAM_API_KEY) {
+      console.log("[useStreamChat] Skipping connection setup:", {
+        hasToken: !!tokenData?.token,
+        hasUserId: !!user?.id,
+        hasStreamApiKey: !!STREAM_API_KEY,
+      });
+      return;
+    }
 
-    const [connectionError, setConnectionError] = useState(null);
+    console.log("[useStreamChat] Starting stream connection for user:", user.id);
+    const client = StreamChat.getInstance(STREAM_API_KEY);
+    let cancelled = false;
 
-    useEffect(() => {
-        const initChat = async () => {
-            if (!user || !tokenData) return;
-            try {
-                const client = StreamChat.getInstance(STREAM_API_KEY);
-                await client.connectUser(
-                    {
-                        id: user.id,
-                        name: user.fullName || user.username || user.id,
-                        image: user.imageUrl,
-                    },
-                    tokenData
-                );
-                setChatClient(client);
-                setConnectionError(null);
-            } catch (err) {
-                console.error("Stream connection error:", err);
-                setConnectionError(err);
-            }
-        };
-        initChat();
-    }, [user, tokenData]);
+    const connect = async () => {
+      try {
+        console.log("[useStreamChat] Connecting user to Stream Chat...");
+        await client.connectUser(
+          {
+            id: user.id,
+            name:
+              user.fullName ?? user.username ?? user.primaryEmailAddress?.emailAddress ?? user.id,
+            image: user.imageUrl ?? undefined,
+          },
+          tokenData.token
+        );
+        console.log("[useStreamChat] Successfully connected to Stream Chat");
+        if (!cancelled) {
+          setChatClient(client);
+        }
+      } catch (error) {
+        console.error("[useStreamChat] Error connecting to stream:", error);
+        Sentry.captureException(error, {
+          tags: { component: "useStreamChat" },
+          extra: {
+            context: "stream_chat_connection",
+            userId: user?.id,
+            streamApiKey: STREAM_API_KEY ? "present" : "missing",
+            tokenPresent: !!tokenData?.token,
+          },
+        });
+      }
+    };
 
-    return { chatClient, isLoading, error: error || connectionError };
+    connect();
+
+    // cleanup
+    return () => {
+      cancelled = true;
+      if (client) {
+        client.disconnectUser();
+      }
+    };
+  }, [tokenData?.token, user?.id, user]);
+
+  return { chatClient, isLoading, error };
 };

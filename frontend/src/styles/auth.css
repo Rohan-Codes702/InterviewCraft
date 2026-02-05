@@ -278,6 +278,15 @@
   100% { transform: rotate(360deg) translateX(0); }
 }
 
+/* ---------- Mid-sized screens ---------- */
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .auth-left, .auth-right { padding: 2rem; }
+  .hero-title { font-size: 3rem; }
+  .brand-name { font-size: 2.2rem; }
+  .auth-hero { padding: 2.5rem; max-width: 450px; }
+}
+
 /* ---------- Tablet ---------- */
 
 @media (max-width: 768px) {

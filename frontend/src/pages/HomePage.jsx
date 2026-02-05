@@ -39,77 +39,9 @@ const HomePage = () => {
     }
   }, [chatClient, searchParams]);
 
-  // Shell header component to keep consistency
-  const SidebarHeader = () => (
-    <div className="team-channel-list__header gap-4">
-      <div className="brand-container">
-        <img src="/logo.png" alt="Logo" className="brand-logo" />
-        <span className="brand-name">DevTalks</span>
-      </div>
-      <div className="user-button-wrapper">
-        <UserButton />
-      </div>
-    </div>
-  );
-
-  // If there's an error, show a more integrated error state
-  if (error) {
-    return (
-      <div className="chat-wrapper">
-        <div className="chat-container">
-          <div className="str-chat__channel-list">
-            <div className="team-channel-list">
-              <SidebarHeader />
-              <div className="team-channel-list__content p-4">
-                <div className="text-red-400 text-sm bg-red-400/10 p-4 rounded-lg border border-red-400/20">
-                  <p className="font-bold mb-2">Connection Error</p>
-                  <p className="opacity-80 mb-4">{error.message || "Failed to connect to chat server."}</p>
-                  <button 
-                    onClick={() => window.location.reload()}
-                    className="w-full py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                  >
-                    Try Again
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="chat-main flex items-center justify-center text-gray-400">
-            Please ensure your backend server is running on port 5000.
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // If still loading client, show the skeleton sidebar but don't block the main area with a dark color
-  if (!chatClient || isLoading) {
-    return (
-      <div className="chat-wrapper">
-        <div className="chat-container">
-          <div className="str-chat__channel-list">
-            <div className="team-channel-list">
-              <SidebarHeader />
-              <div className="team-channel-list__content">
-                <div className="create-channel-section">
-                  <button disabled className="create-channel-btn opacity-50 cursor-not-allowed">
-                    <PlusIcon className="size-4" />
-                    <span>Create Channel</span>
-                  </button>
-                </div>
-                <div className="p-4 text-center text-gray-400 animate-pulse">
-                  Connecting to DevTalks...
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="chat-main flex items-center justify-center text-gray-400">
-             Setting up your workspace...
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // todo: handle this with a better component
+  if (error) return <p>Something went wrong...</p>;
+  if (isLoading || !chatClient) return <PageLoader />;
 
   return (
     <div className="chat-wrapper">
@@ -118,7 +50,17 @@ const HomePage = () => {
           {/* LEFT SIDEBAR */}
           <div className="str-chat__channel-list">
             <div className="team-channel-list">
-              <SidebarHeader />
+              {/* HEADER */}
+              <div className="team-channel-list__header gap-4">
+                <div className="brand-container">
+                  <img src="/logo.png" alt="Logo" className="brand-logo" />
+                  <span className="brand-name">Slap</span>
+                </div>
+                <div className="user-button-wrapper">
+                  <UserButton />
+                </div>
+              </div>
+              {/* CHANNELS LIST */}
               <div className="team-channel-list__content">
                 <div className="create-channel-section">
                   <button onClick={() => setIsCreateModalOpen(true)} className="create-channel-btn">
@@ -127,8 +69,9 @@ const HomePage = () => {
                   </button>
                 </div>
 
+                {/* CHANNEL LIST */}
                 <ChannelList
-                  filters={{ members: { $in: [chatClient.user.id] } }}
+                  filters={{ members: { $in: [chatClient?.user?.id] } }}
                   options={{ state: true, watch: true }}
                   Preview={({ channel }) => (
                     <CustomChannelPreview
@@ -146,6 +89,7 @@ const HomePage = () => {
                         </div>
                       </div>
 
+                      {/* todos: add better components here instead of just a simple text  */}
                       {loading && <div className="loading-message">Loading channels...</div>}
                       {error && <div className="error-message">Error loading channels</div>}
 
@@ -167,24 +111,15 @@ const HomePage = () => {
 
           {/* RIGHT CONTAINER */}
           <div className="chat-main">
-            {activeChannel ? (
-              <Channel channel={activeChannel}>
-                <Window>
-                  <CustomChannelHeader />
-                  <MessageList />
-                  <MessageInput />
-                </Window>
-                <Thread />
-              </Channel>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-gray-500 h-full">
-                <div className="p-8 bg-black/5 rounded-full mb-4">
-                  <HashIcon className="size-12 opacity-20" />
-                </div>
-                <p className="text-xl font-medium">Welcome to DevTalks</p>
-                <p className="opacity-60">Select a channel or user to start chatting</p>
-              </div>
-            )}
+            <Channel channel={activeChannel}>
+              <Window>
+                <CustomChannelHeader />
+                <MessageList />
+                <MessageInput />
+              </Window>
+
+              <Thread />
+            </Channel>
           </div>
         </div>
 

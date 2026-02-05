@@ -1,41 +1,38 @@
-import React from "react";
 import { useAuth } from "@clerk/clerk-react";
-import { Routes, Route, Navigate } from "react-router";
-import HomePage from "./pages/HomePage.jsx";
-import AuthPage from "./pages/AuthPage.jsx";
-import CallPage from "./pages/CallPage.jsx";
+import { Navigate, Route, Routes } from "react-router";
 
-function App() {
+import AuthPage from "./pages/AuthPage";
+import CallPage from "./pages/CallPage";
+import HomePage from "./pages/HomePage";
+
+import * as Sentry from "@sentry/react";
+
+const SentryRoutes = Sentry.withSentryReactRouterV7Routing(Routes);
+
+const App = () => {
   const { isSignedIn, isLoaded } = useAuth();
 
-  if (!isLoaded) return <div>Loading...</div>;
+  if (!isLoaded) return <div style={{ width: "100%", height: "100%", background: "#0a0a0a" }} />;
 
   return (
-    <>
+    <div style={{ width: "100%", height: "100%", display: "flex" }}>
+      <SentryRoutes>
+      <Route path="/" element={isSignedIn ? <HomePage /> : <Navigate to={"/auth"} replace />} />
+      <Route path="/auth" element={!isSignedIn ? <AuthPage /> : <Navigate to={"/"} replace />} />
 
-      <Routes>
-        <Route
-          path="/"
-          element={isSignedIn ? <HomePage /> : <Navigate to="/auth" replace />}
-        />
+      <Route
+        path="/call/:id"
+        element={isSignedIn ? <CallPage /> : <Navigate to={"/auth"} replace />}
+      />
 
-        <Route
-          path="/auth"
-          element={!isSignedIn ? <AuthPage /> : <Navigate to="/" replace />}
-        />
-
-         <Route
-          path="/call/:id"
-          element={isSignedIn ? <CallPage /> : <Navigate to="/auth" replace />}
-        />
-
-        <Route
-          path="*"
-          element={<Navigate to={isSignedIn ? "/" : "/auth"} replace />}
-        />
-      </Routes>
-    </>
+      <Route
+        path="*"
+        element={isSignedIn ? <Navigate to={"/"} replace /> : <Navigate to={"/auth"} replace />}
+      />
+    </SentryRoutes>
+    </div>
   );
-}
+};
 
-export default App;
+ export default App;
+
