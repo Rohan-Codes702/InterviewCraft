@@ -7,9 +7,6 @@ import * as Sentry from "@sentry/react";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
-// this hook is used to connect the current user to the Stream Chat API
-// so that users can see each other's messages, send messages to each other, get realtime updates, etc.
-// it also handles  the disconnection when the user leaves the page
 
 export const useStreamChat = () => {
   const { user } = useUser();
@@ -26,33 +23,16 @@ export const useStreamChat = () => {
     enabled: !!user?.id, // this will take the object and convert it to a boolean
   });
 
-  // Debug logging
-  useEffect(() => {
-    console.log("[useStreamChat] tokenData:", tokenData);
-    console.log("[useStreamChat] user?.id:", user?.id);
-    console.log("[useStreamChat] isLoading:", isLoading);
-    console.log("[useStreamChat] error:", error);
-  }, [tokenData, user?.id, isLoading, error]);
-
   // init stream chat client
   // init stream chat client
   useEffect(() => {
-    if (!tokenData?.token || !user?.id || !STREAM_API_KEY) {
-      console.log("[useStreamChat] Skipping connection setup:", {
-        hasToken: !!tokenData?.token,
-        hasUserId: !!user?.id,
-        hasStreamApiKey: !!STREAM_API_KEY,
-      });
-      return;
-    }
+    if (!tokenData?.token || !user?.id || !STREAM_API_KEY) return;
 
-    console.log("[useStreamChat] Starting stream connection for user:", user.id);
     const client = StreamChat.getInstance(STREAM_API_KEY);
     let cancelled = false;
 
     const connect = async () => {
       try {
-        console.log("[useStreamChat] Connecting user to Stream Chat...");
         await client.connectUser(
           {
             id: user.id,
@@ -62,19 +42,17 @@ export const useStreamChat = () => {
           },
           tokenData.token
         );
-        console.log("[useStreamChat] Successfully connected to Stream Chat");
         if (!cancelled) {
           setChatClient(client);
         }
       } catch (error) {
-        console.error("[useStreamChat] Error connecting to stream:", error);
+        console.log("Error connecting to stream", error);
         Sentry.captureException(error, {
           tags: { component: "useStreamChat" },
           extra: {
             context: "stream_chat_connection",
             userId: user?.id,
             streamApiKey: STREAM_API_KEY ? "present" : "missing",
-            tokenPresent: !!tokenData?.token,
           },
         });
       }
@@ -85,11 +63,9 @@ export const useStreamChat = () => {
     // cleanup
     return () => {
       cancelled = true;
-      if (client) {
-        client.disconnectUser();
-      }
+      client.disconnectUser();
     };
-  }, [tokenData?.token, user?.id, user]);
+  }, [tokenData?.token, user?.id]);
 
   return { chatClient, isLoading, error };
 };

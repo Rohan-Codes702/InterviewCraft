@@ -12,11 +12,10 @@ const SentryRoutes = Sentry.withSentryReactRouterV7Routing(Routes);
 const App = () => {
   const { isSignedIn, isLoaded } = useAuth();
 
-  if (!isLoaded) return <div style={{ width: "100%", height: "100%", background: "#0a0a0a" }} />;
+  if (!isLoaded) return null;
 
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex" }}>
-      <SentryRoutes>
+    <SentryRoutes>
       <Route path="/" element={isSignedIn ? <HomePage /> : <Navigate to={"/auth"} replace />} />
       <Route path="/auth" element={!isSignedIn ? <AuthPage /> : <Navigate to={"/"} replace />} />
 
@@ -30,9 +29,8 @@ const App = () => {
         element={isSignedIn ? <Navigate to={"/"} replace /> : <Navigate to={"/auth"} replace />}
       />
     </SentryRoutes>
-    </div>
   );
 };
 
- export default App;
+export default App;
 

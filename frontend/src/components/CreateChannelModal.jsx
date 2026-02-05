@@ -97,17 +97,16 @@ const CreateChannelModal = ({ onClose }) => {
     setError("");
 
     try {
-      // Create a URL-friendly and unique channel ID
-      const baseId = channelName
+      // MY COOL CHANNEL !#1 => my-cool-channel-1
+      const channelId = channelName
         .toLowerCase()
         .trim()
         .replace(/\s+/g, "-")
         .replace(/[^a-z0-9-_]/g, "")
         .slice(0, 20);
-      
-      const channelId = `${baseId}-${Math.random().toString(36).substring(2, 8)}`;
 
       // prepare the channel data
+
       const channelData = {
         name: channelName.trim(),
         created_by_id: client.user.id,
@@ -121,7 +120,7 @@ const CreateChannelModal = ({ onClose }) => {
         channelData.visibility = "private";
       } else {
         channelData.visibility = "public";
-        // channelData.discoverable = true; // Not strictly needed for basic setup
+        channelData.discoverable = true;
       }
 
       const channel = client.channel("messaging", channelId, channelData);
@@ -131,18 +130,10 @@ const CreateChannelModal = ({ onClose }) => {
       setActiveChannel(channel);
       setSearchParams({ channel: channelId });
 
-      toast.success(`Channel "${channelName}" created!`);
+      toast.success(`Channel "${channelName}" created successfully!`);
       onClose();
     } catch (error) {
-      console.error("Error creating the channel", error);
-      const errorMessage = error?.message || "Failed to create channel. Please try again.";
-      setError(errorMessage);
-      toast.error(errorMessage);
-      
-      Sentry.captureException(error, {
-        tags: { component: "CreateChannelModal" },
-        extra: { context: "create_channel_submit", channelName },
-      });
+      console.log("Error creating the channel", error);
     } finally {
       setIsCreating(false);
     }

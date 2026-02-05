@@ -15,8 +15,6 @@
   overflow: hidden;
 }
 
-/* ---------- Layout ---------- */
-
 .auth-left {
   flex: 1;
   display: flex;
@@ -36,8 +34,6 @@
   padding: 2rem;
 }
 
-/* ---------- Hero Card ---------- */
-
 .auth-hero {
   max-width: 500px;
   color: white;
@@ -47,13 +43,10 @@
   border-radius: 2rem;
   backdrop-filter: blur(25px);
   border: 1px solid rgba(116, 58, 213, 0.2);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15), 
-              0 0 100px rgba(116, 58, 213, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15), 0 0 100px rgba(116, 58, 213, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
 }
-
-/* ---------- Branding ---------- */
 
 .brand-container {
   display: flex;
@@ -80,8 +73,6 @@
   background-clip: text;
 }
 
-/* ---------- Text ---------- */
-
 .hero-title {
   font-size: 3.5rem;
   font-weight: 800;
@@ -102,8 +93,6 @@
   color: #f8f9fa;
 }
 
-/* ---------- Features ---------- */
-
 .features-list {
   display: flex;
   flex-direction: column;
@@ -121,15 +110,13 @@
   backdrop-filter: blur(20px);
   border: 1px solid rgba(116, 58, 213, 0.2);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px rgba(74, 21, 75, 0.1), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px rgba(74, 21, 75, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .feature-item:hover {
   background: rgba(116, 58, 213, 0.15);
   transform: translateX(0.75rem);
-  box-shadow: 0 8px 30px rgba(74, 21, 75, 0.2), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 30px rgba(74, 21, 75, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(116, 58, 213, 0.3);
 }
 
@@ -144,8 +131,6 @@
   border-radius: 50%;
 }
 
-/* ---------- Button ---------- */
-
 .cta-button {
   display: flex;
   align-items: center;
@@ -159,9 +144,8 @@
   border: 1px solid rgba(114, 9, 183, 0.3);
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 20px 40px rgba(74, 21, 75, 0.3), 
-              0 8px 20px rgba(114, 9, 183, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(74, 21, 75, 0.3), 0 8px 20px rgba(114, 9, 183, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(15px);
@@ -184,9 +168,8 @@
 
 .cta-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 25px 60px rgba(74, 21, 75, 0.4), 
-              0 12px 30px rgba(114, 9, 183, 0.3),
-              inset 0 2px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 60px rgba(74, 21, 75, 0.4), 0 12px 30px rgba(114, 9, 183, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(114, 9, 183, 0.4);
 }
 
@@ -198,8 +181,6 @@
   transform: translateX(0.25rem);
 }
 
-/* ---------- Image ---------- */
-
 .auth-image-container {
   position: relative;
   max-width: 480px;
@@ -207,9 +188,8 @@
   width: 100%;
   border-radius: 2rem;
   overflow: hidden;
-  box-shadow: 0 30px 60px rgba(74, 21, 75, 0.25), 
-              0 15px 30px rgba(0, 0, 0, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 60px rgba(74, 21, 75, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   animation: float 6s ease-in-out infinite;
   border: 1px solid rgba(116, 58, 213, 0.2);
 }
@@ -224,16 +204,54 @@
 
 .image-overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: linear-gradient(45deg, rgba(74, 21, 75, 0.15), rgba(45, 27, 105, 0.15));
 }
 
-/* ---------- Background Effects ---------- */
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column;
+  }
+
+  .auth-left {
+    padding: 2rem 1.5rem;
+  }
+
+  .auth-hero {
+    padding: 2rem;
+  }
+
+  .auth-right {
+    min-height: 40vh;
+    padding: 1rem;
+  }
+
+  .auth-image-container {
+    max-width: 360px;
+    max-height: 420px;
+    animation: float 5s ease-in-out infinite;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .brand-name {
+    font-size: 2rem;
+  }
+}
 
 .auth-container::before {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-image: radial-gradient(1px 1px at 25px 35px, rgba(116, 58, 213, 0.4), transparent),
     radial-gradient(1px 1px at 85px 75px, rgba(74, 21, 75, 0.3), transparent),
     radial-gradient(1px 1px at 145px 45px, rgba(114, 9, 183, 0.3), transparent),
@@ -258,51 +276,41 @@
   pointer-events: none;
 }
 
-/* ---------- Animations ---------- */
-
+/* Floating Animation */
 @keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes gentleFloat {
-  0%,100% { transform: translate(0,0); }
-  25% { transform: translate(5px,-15px); }
-  50% { transform: translate(-3px,-8px); }
-  75% { transform: translate(2px,-12px); }
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  25% {
+    transform: translateY(-15px) translateX(5px);
+  }
+  50% {
+    transform: translateY(-8px) translateX(-3px);
+  }
+  75% {
+    transform: translateY(-12px) translateX(2px);
+  }
 }
 
 @keyframes subtleDrift {
-  0% { transform: rotate(0deg) translateX(0); }
-  50% { transform: rotate(180deg) translateX(10px); }
-  100% { transform: rotate(360deg) translateX(0); }
-}
-
-/* ---------- Mid-sized screens ---------- */
-
-@media (max-width: 1024px) and (min-width: 769px) {
-  .auth-left, .auth-right { padding: 2rem; }
-  .hero-title { font-size: 3rem; }
-  .brand-name { font-size: 2.2rem; }
-  .auth-hero { padding: 2.5rem; max-width: 450px; }
-}
-
-/* ---------- Tablet ---------- */
-
-@media (max-width: 768px) {
-  .auth-container { flex-direction: column; }
-  .hero-title { font-size: 2.6rem; }
-  .brand-name { font-size: 2rem; }
-}
-
-/* ---------- Mobile ---------- */
-
-@media (max-width: 480px) {
-  .auth-left, .auth-right { padding: 1.25rem; }
-  .auth-hero { padding: 1.5rem; }
-  .hero-title { font-size: 2.1rem; text-align: center; }
-  .hero-subtitle { text-align: center; font-size: 1rem; }
-  .brand-container { justify-content: center; }
-  .cta-button { width: 100%; justify-content: center; }
-  .auth-image-container { max-height: 320px; }
+  0% {
+    transform: rotate(0deg) translateX(0px);
+  }
+  50% {
+    transform: rotate(180deg) translateX(10px);
+  }
+  100% {
+    transform: rotate(360deg) translateX(0px);
+  }
 }
