@@ -17,7 +17,7 @@ import { Toaster } from "react-hot-toast";
 import * as Sentry from "@sentry/react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import AuthProvider from "./providers/AuthProvide.jsx";
+import AuthProvider from "./providers/AuthProvide.jsx"; 
 
 const queryClient = new QueryClient();
 

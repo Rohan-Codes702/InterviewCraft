@@ -9,18 +9,22 @@ export default function AuthProvider({ children }) {
   const { getToken } = useAuth();
 
   useEffect(() => {
-    // setup axios interceptor
+   
 
     const interceptor = axiosInstance.interceptors.request.use(
       async (config) => {
         try {
           const token = await getToken();
-          if (token) config.headers.Authorization = `Bearer ${token}`;
-        } catch (error) {
-          if (error.message?.includes("auth") || error.message?.includes("token")) {
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          } else {
             toast.error("Authentication issue. Please refresh the page.");
+            return Promise.reject(new Error("No authentication token available"));
           }
-          console.log("Error getting token:", error);
+        } catch (error) {
+          console.error("Error getting token:", error);
+          toast.error("Authentication issue. Please refresh the page.");
+          return Promise.reject(error);
         }
         return config;
       },
@@ -30,7 +34,6 @@ export default function AuthProvider({ children }) {
       }
     );
 
-    // cleanup function to remove the interceptor, this is important to avoid memory leaks
     return () => axiosInstance.interceptors.request.eject(interceptor);
   }, [getToken]);
 
