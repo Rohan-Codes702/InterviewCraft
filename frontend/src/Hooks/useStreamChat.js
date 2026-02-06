@@ -24,7 +24,6 @@ export const useStreamChat = () => {
   });
 
   // init stream chat client
-  // init stream chat client
   useEffect(() => {
     if (!tokenData?.token || !user?.id || !STREAM_API_KEY) return;
 
@@ -65,7 +64,7 @@ export const useStreamChat = () => {
       cancelled = true;
       client.disconnectUser();
     };
-  }, [tokenData?.token, user?.id]);
+  }, [tokenData?.token, user?.id, user?.fullName, user?.imageUrl, user?.primaryEmailAddress?.emailAddress, user?.username]);
 
   return { chatClient, isLoading, error };
 };

@@ -6,24 +6,16 @@ import { clerkMiddleware } from "@clerk/express";
 import { functions, inngest } from "./config/inngest.js";
 import { serve } from "inngest/express";
 import chatRoutes from "./routes/chat.route.js";
-import cors from "cors";
-import * as Sentry from "@sentry/node";
 
-// Validate required environment variables
-if (!ENV.CLERK_SECRET_KEY) {
-  throw new Error("CLERK_SECRET_KEY is required but not set in environment variables");
-}
+import cors from "cors";
+
+import * as Sentry from "@sentry/node";
 
 const app = express();
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: ENV.CLIENT_URL || true,
-    credentials: true,
-  })
-);
-app.use(clerkMiddleware());
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
+app.use(clerkMiddleware()); // req.auth will be available in the request object
 
 app.get("/debug-sentry", (req, res) => {
   throw new Error("My first Sentry error!");
@@ -36,7 +28,6 @@ app.get("/", (req, res) => {
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes);
 
-// ✅ NEW API
 Sentry.setupExpressErrorHandler(app);
 
 const startServer = async () => {
@@ -49,7 +40,7 @@ const startServer = async () => {
     }
   } catch (error) {
     console.error("Error starting server:", error);
-    process.exit(1);
+    process.exit(1); // Exit the process with a failure code
   }
 };
 
